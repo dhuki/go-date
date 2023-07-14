@@ -1,0 +1,26 @@
+app:
+  env: DEV
+  name: go-date
+  port: 8080
+  logFormat: text
+postgres:
+  master:
+    dbName:
+    host:
+    password:
+    port:
+    schema:
+    user:
+    debug:
+  slave:
+    dbName:
+    host:
+    password:
+    port:
+    schema:
+    user:
+    debug:
+  maxIdleConnections:
+  maxOpenConnections:
+  setConMaxIdleTime:
+  connectTimeout:
