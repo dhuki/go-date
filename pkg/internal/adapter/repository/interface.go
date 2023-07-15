@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	Transaction
 	UserRepository
+	RelationUser
 }
 
 type RepositoryImpl struct {

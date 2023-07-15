@@ -1,6 +1,16 @@
 package middleware
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var (
+	KeyCountSwipeAction   = "count.swipe.action"
+	KeyLockingSwipeAction = "locking.swipe.action"
+
+	ErrRateLimiteReachedMaxAttempt = errors.New("swipe action telah melewati batas harian")
+)
 
 // requestLog - request information from client
 type requestLog struct {

@@ -2,20 +2,21 @@ package repository
 
 import (
 	"context"
-	"database/sql"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Transaction interface {
-	Start(ctx context.Context) (*sql.Tx, error)
-	Finish(ctx context.Context, tx *sql.Tx, errQuery error) error
+	Start(ctx context.Context) (*sqlx.Tx, error)
+	Finish(ctx context.Context, tx *sqlx.Tx, err error) error
 }
 
-func (ri RepositoryImpl) Start(ctx context.Context) (*sql.Tx, error) {
-	tx, err := ri.dbMaster.BeginTx(ctx, nil)
+func (ri RepositoryImpl) Start(ctx context.Context) (*sqlx.Tx, error) {
+	tx, err := ri.dbMaster.BeginTxx(ctx, nil)
 	return tx, err
 }
 
-func (ri RepositoryImpl) Finish(ctx context.Context, tx *sql.Tx, errQuery error) error {
+func (ri RepositoryImpl) Finish(ctx context.Context, tx *sqlx.Tx, errQuery error) error {
 	if errQuery != nil {
 		if errRollback := ri.rollback(tx); errRollback != nil {
 			return errRollback
@@ -31,10 +32,10 @@ func (ri RepositoryImpl) Finish(ctx context.Context, tx *sql.Tx, errQuery error)
 	return nil
 }
 
-func (ri RepositoryImpl) complete(tx *sql.Tx) error {
+func (ri RepositoryImpl) complete(tx *sqlx.Tx) error {
 	return tx.Commit()
 }
 
-func (ri RepositoryImpl) rollback(tx *sql.Tx) error {
+func (ri RepositoryImpl) rollback(tx *sqlx.Tx) error {
 	return tx.Rollback()
 }

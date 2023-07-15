@@ -3,6 +3,7 @@ module github.com/dhuki/go-date
 go 1.20
 
 require (
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/golang/mock v1.4.4
 	github.com/jmoiron/sqlx v1.3.5
@@ -49,6 +50,8 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.27.8 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sagikazarmark/crypt v0.10.0 // indirect

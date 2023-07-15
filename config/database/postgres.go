@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func InitPostgres(conf *config.Database) (err error) {
+func InitPostgres(conf *config.DatabaseConfig) (err error) {
 	PostgresDb.Master, err = PostgresDb.OpenPostgresConnection(&conf.Master, &conf.DbConnectionInfo)
 	if err != nil {
 		return err

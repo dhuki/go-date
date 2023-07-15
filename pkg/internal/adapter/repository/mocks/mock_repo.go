@@ -6,11 +6,11 @@ package mocks
 
 import (
 	context "context"
-	sql "database/sql"
 	reflect "reflect"
 
 	model "github.com/dhuki/go-date/pkg/internal/adapter/repository/model"
 	gomock "github.com/golang/mock/gomock"
+	sqlx "github.com/jmoiron/sqlx"
 )
 
 // MockRepository is a mock of Repository interface.
@@ -37,7 +37,7 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockRepository) Create(arg0 context.Context, arg1 *sql.Tx, arg2 model.User) (uint64, error) {
+func (m *MockRepository) Create(arg0 context.Context, arg1 *sqlx.Tx, arg2 model.User) (uint64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", arg0, arg1, arg2)
 	ret0, _ := ret[0].(uint64)
@@ -52,7 +52,7 @@ func (mr *MockRepositoryMockRecorder) Create(arg0, arg1, arg2 interface{}) *gomo
 }
 
 // Finish mocks base method.
-func (m *MockRepository) Finish(arg0 context.Context, arg1 *sql.Tx, arg2 error) error {
+func (m *MockRepository) Finish(arg0 context.Context, arg1 *sqlx.Tx, arg2 error) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Finish", arg0, arg1, arg2)
 	ret0, _ := ret[0].(error)
@@ -65,19 +65,19 @@ func (mr *MockRepositoryMockRecorder) Finish(arg0, arg1, arg2 interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Finish", reflect.TypeOf((*MockRepository)(nil).Finish), arg0, arg1, arg2)
 }
 
-// GetUserByEmail mocks base method.
-func (m *MockRepository) GetUserByEmail(arg0 context.Context, arg1 string) (model.User, error) {
+// GetUserByID mocks base method.
+func (m *MockRepository) GetUserByID(arg0 context.Context, arg1 uint64) (model.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserByEmail", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetUserByID", arg0, arg1)
 	ret0, _ := ret[0].(model.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetUserByEmail indicates an expected call of GetUserByEmail.
-func (mr *MockRepositoryMockRecorder) GetUserByEmail(arg0, arg1 interface{}) *gomock.Call {
+// GetUserByID indicates an expected call of GetUserByID.
+func (mr *MockRepositoryMockRecorder) GetUserByID(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByEmail", reflect.TypeOf((*MockRepository)(nil).GetUserByEmail), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockRepository)(nil).GetUserByID), arg0, arg1)
 }
 
 // GetUserByUsername mocks base method.
@@ -95,11 +95,26 @@ func (mr *MockRepositoryMockRecorder) GetUserByUsername(arg0, arg1 interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsername", reflect.TypeOf((*MockRepository)(nil).GetUserByUsername), arg0, arg1)
 }
 
+// GetUserPagination mocks base method.
+func (m *MockRepository) GetUserPagination(arg0 context.Context, arg1 string, arg2, arg3 int) ([]model.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserPagination", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].([]model.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserPagination indicates an expected call of GetUserPagination.
+func (mr *MockRepositoryMockRecorder) GetUserPagination(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserPagination", reflect.TypeOf((*MockRepository)(nil).GetUserPagination), arg0, arg1, arg2, arg3)
+}
+
 // Start mocks base method.
-func (m *MockRepository) Start(arg0 context.Context) (*sql.Tx, error) {
+func (m *MockRepository) Start(arg0 context.Context) (*sqlx.Tx, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Start", arg0)
-	ret0, _ := ret[0].(*sql.Tx)
+	ret0, _ := ret[0].(*sqlx.Tx)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -108,4 +123,18 @@ func (m *MockRepository) Start(arg0 context.Context) (*sql.Tx, error) {
 func (mr *MockRepositoryMockRecorder) Start(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Start", reflect.TypeOf((*MockRepository)(nil).Start), arg0)
+}
+
+// UpsertRelationUser mocks base method.
+func (m *MockRepository) UpsertRelationUser(arg0 context.Context, arg1 *sqlx.Tx, arg2 model.RelationUser) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpsertRelationUser", arg0, arg1, arg2)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpsertRelationUser indicates an expected call of UpsertRelationUser.
+func (mr *MockRepositoryMockRecorder) UpsertRelationUser(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertRelationUser", reflect.TypeOf((*MockRepository)(nil).UpsertRelationUser), arg0, arg1, arg2)
 }

@@ -9,24 +9,12 @@ import (
 )
 
 func (handler DateHandler) ListUserRoute(app *echo.Group) {
-	app.POST("/user/sign-up", handler.signUp())
-	app.POST("/user/login", handler.login())
+	v1GroupUser := app.Group("/user")
+
+	v1GroupUser.POST("/sign-up", handler.signUp())
+	v1GroupUser.POST("/login", handler.login())
 }
 
-// uploadDocument godoc
-// @Summary 	Upload document form-data
-// @Description	Upload document form-data
-// @Tags		http
-// @Accept 		multipart/form-data
-// @Param 		file 		formData 	file 	true	"file"
-// @Param 		name 		formData 	string 	true	"name"
-// @Param 		type 		formData 	string 	true	"type"
-// @Param 		path 		formData 	string 	true	"path"
-// @Param 		callbackUrl formData	string	false	"callback url"
-// @Param 		metadata 	formData 	string 	true 	"metadata of json map<string, any>"
-// @Produce		json
-// @Success 200 {object} helper.Response{data=DoUploadDocumentResponse,list=interface{}} "Response indicates that the request succeeded and the resources has been fetched and transmitted in the message body"
-// @Router /documents/upload-form-data [post]
 func (d DateHandler) signUp() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()

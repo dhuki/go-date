@@ -1,28 +1,69 @@
 package v1
 
-import "github.com/labstack/echo/v4"
+import (
+	"errors"
+	"net/http"
+	"strconv"
+
+	"github.com/dhuki/go-date/pkg/internal/adapter/http/helper"
+	"github.com/dhuki/go-date/pkg/middleware"
+	"github.com/labstack/echo/v4"
+)
 
 func (handler DateHandler) ListCandidateRoute(app *echo.Group) {
-	app.POST("/candidate/swipe", handler.swipeAction())
+	v1GroupCandidate := app.Group("/candidate")
+	v1GroupCandidate.Use(middleware.ValidateJWTAccessToken(handler.validationService))
+
+	v1GroupCandidate.GET("/candidate", handler.getListCandidate())
+	v1GroupCandidate.POST("/candidate/swipe/:candidateId", middleware.RateLimiter(handler.redisLibs)(handler.swipeAction()))
 }
 
-// uploadDocument godoc
-// @Summary 	Upload document form-data
-// @Description	Upload document form-data
-// @Tags		http
-// @Accept 		multipart/form-data
-// @Param 		file 		formData 	file 	true	"file"
-// @Param 		name 		formData 	string 	true	"name"
-// @Param 		type 		formData 	string 	true	"type"
-// @Param 		path 		formData 	string 	true	"path"
-// @Param 		callbackUrl formData	string	false	"callback url"
-// @Param 		metadata 	formData 	string 	true 	"metadata of json map<string, any>"
-// @Produce		json
-// @Success 200 {object} helper.Response{data=DoUploadDocumentResponse,list=interface{}} "Response indicates that the request succeeded and the resources has been fetched and transmitted in the message body"
-// @Router /documents/upload-form-data [post]
 func (d DateHandler) swipeAction() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		d.candidateService.SwipeAction(c.Request().Context())
-		return nil
+		ctx := c.Request().Context()
+
+		candidateIDStr := c.Param("candidateId")
+		if candidateIDStr == "" {
+			return helper.ResponseError(c, http.StatusBadRequest, errors.New("todo fixing"))
+		}
+
+		swipeDirection := c.QueryParam("to")
+		if swipeDirection == "" {
+			return helper.ResponseError(c, http.StatusBadRequest, errors.New("todo fixing"))
+		}
+
+		candidateID, err := strconv.ParseUint(candidateIDStr, 10, 64)
+		if err != nil {
+			return helper.ResponseError(c, http.StatusBadRequest, err)
+		}
+
+		if err = d.candidateService.SwipeAction(ctx, candidateID, swipeDirection); err != nil {
+			return helper.ResponseError(c, http.StatusInternalServerError, err)
+		}
+
+		return helper.ResponseSuccess(c, "success", nil)
+	}
+}
+
+func (d DateHandler) getListCandidate() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+
+		limitStr := c.QueryParam("limit")
+		if limitStr == "" {
+			return helper.ResponseError(c, http.StatusBadRequest, errors.New("todo fixing"))
+		}
+
+		limit, err := strconv.Atoi(limitStr)
+		if err != nil {
+			return helper.ResponseError(c, http.StatusBadRequest, errors.New("todo fixing"))
+		}
+
+		data, err := d.candidateService.GetListCandidate(ctx, limit)
+		if err != nil {
+			return helper.ResponseError(c, http.StatusInternalServerError, err)
+		}
+
+		return helper.ResponseSuccessPagination(c, "success", data.CandidateList, data.Page)
 	}
 }

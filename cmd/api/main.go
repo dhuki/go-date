@@ -10,6 +10,7 @@ import (
 	"github.com/dhuki/go-date/config"
 	"github.com/dhuki/go-date/config/consul"
 	"github.com/dhuki/go-date/config/database"
+	"github.com/dhuki/go-date/config/redis"
 	"github.com/dhuki/go-date/pkg/logger"
 	"github.com/dhuki/go-date/pkg/router"
 	"github.com/labstack/echo/v4"
@@ -30,7 +31,12 @@ func main() {
 
 	// init postgres database
 	if err := database.InitPostgres(&config.Conf.ConnDatabase); err != nil {
-		logger.Fatal(ctx, "connect postgres db", "Error connect to database, err : %v", err)
+		logger.Fatal(ctx, "database.InitPostgres", "Error connect to database, err : %v", err)
+	}
+
+	// init redis
+	if err := redis.InitRedis(&config.Conf.Redis); err != nil {
+		logger.Fatal(ctx, "redis.InitRedis", "Error connect to redis, err : %v", err)
 	}
 
 	// init router

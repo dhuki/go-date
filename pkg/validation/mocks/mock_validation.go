@@ -7,6 +7,7 @@ package mocks
 import (
 	reflect "reflect"
 
+	jwt "github.com/golang-jwt/jwt/v5"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -34,16 +35,31 @@ func (m *MockValidation) EXPECT() *MockValidationMockRecorder {
 }
 
 // GenerateJWTAccessToken mocks base method.
-func (m *MockValidation) GenerateJWTAccessToken() (string, error) {
+func (m *MockValidation) GenerateJWTAccessToken(arg0 uint64) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateJWTAccessToken")
+	ret := m.ctrl.Call(m, "GenerateJWTAccessToken", arg0)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateJWTAccessToken indicates an expected call of GenerateJWTAccessToken.
-func (mr *MockValidationMockRecorder) GenerateJWTAccessToken() *gomock.Call {
+func (mr *MockValidationMockRecorder) GenerateJWTAccessToken(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateJWTAccessToken", reflect.TypeOf((*MockValidation)(nil).GenerateJWTAccessToken))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateJWTAccessToken", reflect.TypeOf((*MockValidation)(nil).GenerateJWTAccessToken), arg0)
+}
+
+// ParseJWTAccessToken mocks base method.
+func (m *MockValidation) ParseJWTAccessToken(arg0 string) (*jwt.Token, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ParseJWTAccessToken", arg0)
+	ret0, _ := ret[0].(*jwt.Token)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseJWTAccessToken indicates an expected call of ParseJWTAccessToken.
+func (mr *MockValidationMockRecorder) ParseJWTAccessToken(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseJWTAccessToken", reflect.TypeOf((*MockValidation)(nil).ParseJWTAccessToken), arg0)
 }

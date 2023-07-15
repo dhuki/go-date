@@ -5,9 +5,10 @@ import "time"
 type User struct {
 	ID          uint64     `db:"id"`
 	Username    string     `db:"username"`
+	Password    string     `db:"password"`
 	FirstName   string     `db:"firstName"`
 	LastName    string     `db:"lastName"`
-	Email       string     `db:"email"`
+	Gender      string     `db:"gender"`
 	PicUrl      string     `db:"picUrl"`
 	District    string     `db:"district"`
 	City        string     `db:"city"`
