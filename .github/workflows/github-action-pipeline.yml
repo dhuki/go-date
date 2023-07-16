@@ -11,9 +11,10 @@ env:
 jobs:
 
   build:
+    # runs-on: self-hosted
     runs-on: ubuntu-latest
-    steps:
     
+    steps:
     - name: Will checkout to the repo in runner
       uses: actions/checkout@v3
       
@@ -21,8 +22,19 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: ${{ env.GO_VERSION }}
+    
+    - name: Test
+        run: go test -v ./...
+    
+    # - name: Build go file
+    #   env:
+    #     GOPATH: ${{ runner.tool_cache }}/go/${{ env.GO_VERSION }}/x64
+    #     GOCACHE: ${{ secrets.HOME_DIR }}
+    #   run: | 
+    #     go clean --cache
+    #     go build
 
-   # - name: Deployment to Prod
+    # - name: Deployment to Prod
     #   env: # set secret as an environment variable
     #     ANSIBLE_TEMPLATE_HOME: ${{ secrets.ANSIBLE_TEMPLATE_HOME }}
     #   run: |
