@@ -155,6 +155,20 @@ func (mr *MockRepositoryMockRecorder) Start(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Start", reflect.TypeOf((*MockRepository)(nil).Start), arg0)
 }
 
+// UpdateUserPremium mocks base method.
+func (m *MockRepository) UpdateUserPremium(arg0 context.Context, arg1 model.User) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserPremium", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserPremium indicates an expected call of UpdateUserPremium.
+func (mr *MockRepositoryMockRecorder) UpdateUserPremium(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserPremium", reflect.TypeOf((*MockRepository)(nil).UpdateUserPremium), arg0, arg1)
+}
+
 // UpsertRelationUser mocks base method.
 func (m *MockRepository) UpsertRelationUser(arg0 context.Context, arg1 *sqlx.Tx, arg2 model.RelationUser) error {
 	m.ctrl.T.Helper()

@@ -12,13 +12,16 @@ import (
 type UserService interface {
 	SignUp(ctx context.Context, request modelReq.CreateUserRequest) (err error)
 	Login(ctx context.Context, request modelReq.LoginRequest) (response modelReq.LoginResponse, err error)
+	UpdatePremiumUser(ctx context.Context, userID uint64) (err error)
 }
 
 type UserRepository interface {
 	Start(ctx context.Context) (*sqlx.Tx, error)
 	Finish(ctx context.Context, tx *sqlx.Tx, err error) error
 	Create(ctx context.Context, tx *sqlx.Tx, user modelRepo.User) (id uint64, err error)
+	GetUserByID(ctx context.Context, userID uint64) (user modelRepo.User, err error)
 	GetUserByUsername(ctx context.Context, username string) (user modelRepo.User, err error)
+	UpdateUserPremium(ctx context.Context, user modelRepo.User) (err error)
 }
 
 type JWTAccessToken interface {

@@ -288,3 +288,71 @@ func TestLogin(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdatePremiumUser(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	userRepoMock := repoMock.NewMockRepository(ctrl)
+	validationMock := validationMock.NewMockValidation(ctrl)
+	redisMock := redisMock.NewMockRedis(ctrl)
+
+	userSvc := NewUserService(userRepoMock, validationMock, redisMock)
+	config.Conf.RateLimiter.MaxAttemptLogin = 3
+
+	testCases := []struct {
+		desc     string
+		wantErr  error
+		req      uint64
+		mockFunc func()
+	}{
+		{
+			desc:    "should return success update user to premium",
+			wantErr: nil,
+			req:     uint64(1),
+			mockFunc: func() {
+				userRepoMock.EXPECT().GetUserByID(gomock.Any(), gomock.Any()).Return(modelRepo.User{
+					ID: 1,
+				}, nil)
+				userRepoMock.EXPECT().UpdateUserPremium(gomock.Any(), gomock.Any()).Return(nil)
+			},
+		},
+		{
+			desc:    "should return error whern get user by id",
+			wantErr: errors.New("something error"),
+			req:     uint64(1),
+			mockFunc: func() {
+				userRepoMock.EXPECT().GetUserByID(gomock.Any(), gomock.Any()).Return(modelRepo.User{
+					ID: 1,
+				}, errors.New("something error"))
+			},
+		},
+		{
+			desc:    "should return error when update is premium",
+			wantErr: errors.New("something error"),
+			req:     uint64(1),
+			mockFunc: func() {
+				userRepoMock.EXPECT().GetUserByID(gomock.Any(), gomock.Any()).Return(modelRepo.User{
+					ID: 1,
+				}, nil)
+				userRepoMock.EXPECT().UpdateUserPremium(gomock.Any(), gomock.Any()).Return(errors.New("something error"))
+			},
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			if tC.mockFunc != nil {
+				tC.mockFunc()
+			}
+			err := userSvc.UpdatePremiumUser(context.TODO(), tC.req)
+
+			if tC.wantErr == nil && err != nil {
+				t.Fatalf("expected not error, but got error: %v", err)
+			}
+
+			if tC.wantErr != nil && err == nil {
+				t.Fatalf("expected got error: %v, but actually not error", err)
+			}
+		})
+	}
+}

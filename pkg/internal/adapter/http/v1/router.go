@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/dhuki/go-date/pkg/internal/adapter/repository"
 	candidatePort "github.com/dhuki/go-date/pkg/internal/core/candidate/port"
 	userPort "github.com/dhuki/go-date/pkg/internal/core/user/port"
 	"github.com/dhuki/go-date/pkg/redis"
@@ -13,17 +14,20 @@ type DateHandler struct {
 	candidateService candidatePort.CandidateService
 
 	// dependency
+	repository        repository.Repository
 	validationService validation.Validation
 	redisLibs         redis.Redis
 }
 
 func NewDateHandler(
 	userService userPort.UserService,
+	repository repository.Repository,
 	candidateService candidatePort.CandidateService,
 	validationService validation.Validation,
 	redisLibs redis.Redis) DateHandler {
 	return DateHandler{
 		userService:       userService,
+		repository:        repository,
 		candidateService:  candidateService,
 		validationService: validationService,
 		redisLibs:         redisLibs,

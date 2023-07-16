@@ -1,0 +1,29 @@
+---
+
+- name: template push config to consul
+  hosts: localhost
+  become: yes
+  become_user: root
+  tasks: 
+        - name: Set vault_db vars
+          set_fact:
+                vault_db: "{{ lookup('hashi_vault', 'secret=kv/data/{service_name} token={sensitive_data} url={host_vault}') }}"
+
+        - name: Templating the file with variables in fact
+          template:
+                src: "{{ config_file }}"
+                dest: "./config.final.yaml"
+
+        - name: Load file config from templating
+          include_vars:
+                file: "./config.final.yaml"
+                name: config
+
+        - name: Push configuration file to Consul
+          uri:
+                url: "{host_consul}"
+                body: "{{ config | to_nice_yaml }}"
+                body_format: form-urlencoded
+                method: PUT
+                status_code: 200
+                validate_certs: no

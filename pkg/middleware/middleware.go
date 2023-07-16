@@ -10,6 +10,7 @@ import (
 
 	"github.com/dhuki/go-date/config"
 	"github.com/dhuki/go-date/pkg/internal/adapter/http/helper"
+	"github.com/dhuki/go-date/pkg/internal/adapter/repository"
 	"github.com/dhuki/go-date/pkg/logger"
 	"github.com/dhuki/go-date/pkg/redis"
 	"github.com/dhuki/go-date/pkg/validation"
@@ -39,7 +40,7 @@ func Logger(next echo.HandlerFunc) echo.HandlerFunc {
 	})
 }
 
-func ValidateJWTAccessToken(validationSvc validation.Validation) echo.MiddlewareFunc {
+func ValidateJWTAccessToken(validationSvc validation.Validation, repo repository.Repository) echo.MiddlewareFunc {
 	return echo.MiddlewareFunc(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return echo.HandlerFunc(func(c echo.Context) error {
 			ctx := c.Request().Context()
@@ -51,14 +52,25 @@ func ValidateJWTAccessToken(validationSvc validation.Validation) echo.Middleware
 
 			bearerToken := strings.Split(authHeader, " ")
 			token := bearerToken[1]
-
 			parsedToken, err := validationSvc.ParseJWTAccessToken(token)
 			if err != nil {
 				return helper.ResponseError(c, http.StatusUnauthorized, err)
 			}
 
 			mapClaim := parsedToken.Claims.(jwt.MapClaims)
-			ctx = context.WithValue(ctx, config.ValueUserIDctx, mapClaim["jti"])
+			userIDStr := fmt.Sprint(mapClaim["jti"])
+			userID, err := strconv.ParseUint(userIDStr, 10, 64)
+			if err != nil {
+				return helper.ResponseError(c, http.StatusInternalServerError, err)
+			}
+
+			user, err := repo.GetUserByID(ctx, userID)
+			if err != nil {
+				return helper.ResponseError(c, http.StatusInternalServerError, err)
+			}
+
+			ctx = context.WithValue(ctx, config.ValueUserIDctx, userIDStr)
+			ctx = context.WithValue(ctx, config.ValueUserIDIsPremiumctx, user.IsPremium)
 			c.SetRequest(c.Request().WithContext(ctx))
 			if err = next(c); err != nil {
 				return helper.ResponseError(c, http.StatusInternalServerError, err)
@@ -79,6 +91,15 @@ func RateLimiter(redisLib redis.Redis) echo.MiddlewareFunc {
 			}
 			defer redisLib.Delete(swipeLockingKey)
 
+			isPremiumStr := fmt.Sprint(ctx.Value(config.ValueUserIDIsPremiumctx))
+			isPremium, _ := strconv.ParseBool(isPremiumStr)
+			if isPremium {
+				if err := next(c); err != nil {
+					return err
+				}
+				return nil
+			}
+
 			swipeKey := fmt.Sprintf("%s.%s", KeyCountSwipeAction, ctx.Value(config.ValueUserIDctx))
 			if value := redisLib.Get(swipeKey); len(value) > 0 {
 				currentCount, err := strconv.Atoi(value)
@@ -94,7 +115,6 @@ func RateLimiter(redisLib redis.Redis) echo.MiddlewareFunc {
 				redisLib.SetIncr(swipeKey)
 				return nil
 			}
-
 			if err := next(c); err != nil {
 				return err
 			}

@@ -5,6 +5,7 @@ import "errors"
 var (
 	ErrCandidateIsEmpty      = errors.New("Terjadi kesalahan inputan request candidateId kosong")
 	ErrSwipeDirectionIsEmpty = errors.New("Terjadi kesalahan inputan request swipe direction kosong")
+	ErrUserIDIsEmpty         = errors.New("Terjadi kesalahan inputan request userId kosong")
 	ErrLimitIsEmpty          = errors.New("Terjadi kesalahan inputan request limit kosong")
 )
 

@@ -1,26 +1,42 @@
 app:
-  env: DEV
+  env: UAT
   name: go-date
   port: 8080
   logFormat: text
+  timeout: 60s
 postgres:
   master:
-    dbName:
-    host:
-    password:
-    port:
-    schema:
-    user:
-    debug:
+    dbName: postgres
+    host: localhost
+    password: postgres
+    port: 5432
+    schema: public
+    user: dhukidwirachman
+    debug: false
   slave:
-    dbName:
-    host:
-    password:
-    port:
-    schema:
-    user:
-    debug:
-  maxIdleConnections:
-  maxOpenConnections:
-  setConMaxIdleTime:
-  connectTimeout:
+    dbName: postgres
+    host: localhost
+    password: postgres
+    port: 5432
+    schema: public
+    user: dhukidwirachman
+    debug: false
+  maxIdleConnections: 10
+  maxOpenConnections: 10
+  setConMaxIdleTime: 10
+  connectTimeout: 10
+redis:
+  host: localhost:6379
+  db: 0
+  password:
+  failedLoginAttemptTTL: 1h
+  failedLoginIssuspendTTL: 15m
+  lastPageCandidateTTL: 24h
+  countSwipeActionTTL: 24h
+  lockingSwipeActionTTL: 1h
+rateLimiter:
+  maxSwipeAction: 10
+  maxAttemptLogin: 3
+jwtToken:
+  secret: secret
+  expires: 1h

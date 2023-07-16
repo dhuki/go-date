@@ -12,7 +12,7 @@ import (
 
 func (handler DateHandler) ListCandidateRoute(app *echo.Group) {
 	v1GroupCandidate := app.Group("/candidate")
-	v1GroupCandidate.Use(middleware.ValidateJWTAccessToken(handler.validationService))
+	v1GroupCandidate.Use(middleware.ValidateJWTAccessToken(handler.validationService, handler.repository))
 
 	v1GroupCandidate.GET("", handler.getListCandidate())
 	v1GroupCandidate.POST("/swipe/:candidateId", middleware.RateLimiter(handler.redisLibs)(handler.swipeAction()))

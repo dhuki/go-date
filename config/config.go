@@ -2,12 +2,13 @@ package config
 
 import "time"
 
-type TypeUserIDctx string
+type TypeUserctx string
 
 var (
 	Conf Config
 
-	ValueUserIDctx TypeUserIDctx = "ValueUserIDctx"
+	ValueUserIDctx          TypeUserctx = "ValueUserIDctx"
+	ValueUserIDIsPremiumctx TypeUserctx = "ValueUserIDIsPremiumctx"
 )
 
 type Config struct {

@@ -135,3 +135,23 @@ func (u userServiceImpl) Login(ctx context.Context, req modelReq.LoginRequest) (
 
 	return
 }
+
+func (u userServiceImpl) UpdatePremiumUser(ctx context.Context, userID uint64) (err error) {
+	ctxName := fmt.Sprintf("%T.UpdatePremiumUser", u)
+
+	user, err := u.repository.GetUserByID(ctx, userID)
+	if err != nil {
+		logger.Error(ctx, ctxName, "u.repository.GetUserByID, got err: %v", err)
+		return
+	}
+
+	user.IsPremium = true
+	user.UpdatedAt = time.Now()
+	err = u.repository.UpdateUserPremium(ctx, user)
+	if err != nil {
+		logger.Error(ctx, ctxName, "u.repository.UpdateUserPremium, got err: %v", err)
+		return
+	}
+
+	return
+}

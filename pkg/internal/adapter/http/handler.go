@@ -39,6 +39,6 @@ func NewHttpHandler(app *echo.Echo) {
 	candidateSvc := candidateService.NewCandidateService(repo, redisLibs)
 
 	v1.NewDateHandler(
-		userSvc, candidateSvc,
+		userSvc, repo, candidateSvc,
 		validationSvc, redisLibs).RegistRoute(v1Group)
 }
