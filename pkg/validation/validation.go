@@ -25,11 +25,11 @@ func (v ValidationImpl) GenerateJWTAccessToken(userID uint64) (token string, err
 	tokenString := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		ID:        fmt.Sprint(userID),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(config.Conf.JwtSecret.Expires)),
 	})
 
 	// sign the generated key using secretKey
-	token, err = tokenString.SignedString([]byte(config.Conf.JwtSecret))
+	token, err = tokenString.SignedString([]byte(config.Conf.JwtSecret.Secret))
 	return
 }
 
@@ -41,7 +41,7 @@ func (v ValidationImpl) ParseJWTAccessToken(tokenString string) (token *jwt.Toke
 		}
 
 		// hmacSampleSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
-		return []byte(config.Conf.JwtSecret), nil
+		return []byte(config.Conf.JwtSecret.Secret), nil
 	})
 	if err != nil {
 		return

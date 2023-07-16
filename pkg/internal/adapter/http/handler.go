@@ -8,6 +8,7 @@ import (
 	"github.com/dhuki/go-date/pkg/internal/adapter/repository"
 	candidateService "github.com/dhuki/go-date/pkg/internal/core/candidate/service"
 	userService "github.com/dhuki/go-date/pkg/internal/core/user/service"
+	"github.com/dhuki/go-date/pkg/middleware"
 	redisLib "github.com/dhuki/go-date/pkg/redis"
 	"github.com/dhuki/go-date/pkg/validation"
 	"github.com/labstack/echo/v4"
@@ -20,7 +21,7 @@ func NewHttpHandler(app *echo.Echo) {
 		ErrorMessage: "timeout",
 	}))
 	app.Use(echoMiddleware.Recover())
-	// app.Use(middleware.Logger)
+	app.Use(middleware.Logger)
 
 	v1Group := app.Group("/api/v1")
 

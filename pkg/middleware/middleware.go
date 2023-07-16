@@ -2,13 +2,14 @@ package middleware
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/dhuki/go-date/config"
+	"github.com/dhuki/go-date/pkg/internal/adapter/http/helper"
 	"github.com/dhuki/go-date/pkg/logger"
 	"github.com/dhuki/go-date/pkg/redis"
 	"github.com/dhuki/go-date/pkg/validation"
@@ -31,15 +32,8 @@ func Logger(next echo.HandlerFunc) echo.HandlerFunc {
 			Status:        c.Response().Status,
 			ResponseTime:  time.Since(start).Seconds(),
 			ResponseSize:  c.Response().Size,
-			// ReqBody:       ctx.Value(utils.LOG_REQ_BODY),
 		}
-
 		logger.Info(ctx, "logger", "%+v", rl)
-
-		// b, err := json.Marshal(&rl)
-		// if err == nil {
-		// 	logger.Info(ctx, "logger", "%+v", rl)
-		// }
 
 		return nil
 	})
@@ -52,7 +46,7 @@ func ValidateJWTAccessToken(validationSvc validation.Validation) echo.Middleware
 
 			authHeader := c.Request().Header.Get("Authorization")
 			if authHeader == "" {
-				return errors.New("error")
+				return helper.ResponseError(c, http.StatusUnauthorized, ErrTokenIsEmpty)
 			}
 
 			bearerToken := strings.Split(authHeader, " ")
@@ -60,13 +54,15 @@ func ValidateJWTAccessToken(validationSvc validation.Validation) echo.Middleware
 
 			parsedToken, err := validationSvc.ParseJWTAccessToken(token)
 			if err != nil {
-				return err
+				return helper.ResponseError(c, http.StatusUnauthorized, err)
 			}
 
 			mapClaim := parsedToken.Claims.(jwt.MapClaims)
 			ctx = context.WithValue(ctx, config.ValueUserIDctx, mapClaim["jti"])
 			c.SetRequest(c.Request().WithContext(ctx))
-			next(c)
+			if err = next(c); err != nil {
+				return helper.ResponseError(c, http.StatusInternalServerError, err)
+			}
 			return nil
 		})
 	})
@@ -79,7 +75,7 @@ func RateLimiter(redisLib redis.Redis) echo.MiddlewareFunc {
 
 			swipeLockingKey := fmt.Sprintf("%s.%s", KeyLockingSwipeAction, ctx.Value(config.ValueUserIDctx))
 			if err := redisLib.SetLockingKey(swipeLockingKey, true, config.Conf.Redis.LockingSwipeActionTTL); err != nil {
-				return err
+				return helper.ResponseError(c, http.StatusInternalServerError, err)
 			}
 			defer redisLib.Delete(swipeLockingKey)
 
@@ -87,10 +83,10 @@ func RateLimiter(redisLib redis.Redis) echo.MiddlewareFunc {
 			if value := redisLib.Get(swipeKey); len(value) > 0 {
 				currentCount, err := strconv.Atoi(value)
 				if err != nil {
-					return err
+					return helper.ResponseError(c, http.StatusInternalServerError, err)
 				}
 				if currentCount >= config.Conf.RateLimiter.MaxSwipeAction {
-					return ErrRateLimiteReachedMaxAttempt
+					return helper.ResponseError(c, http.StatusTooManyRequests, ErrRateLimiteReachedMaxAttempt)
 				}
 				if err = next(c); err != nil {
 					return err
@@ -99,8 +95,11 @@ func RateLimiter(redisLib redis.Redis) echo.MiddlewareFunc {
 				return nil
 			}
 
-			if err := redisLib.Set(swipeKey, 1, config.Conf.Redis.CountSwipeActionTTL); err != nil {
+			if err := next(c); err != nil {
 				return err
+			}
+			if err := redisLib.Set(swipeKey, 1, config.Conf.Redis.CountSwipeActionTTL); err != nil {
+				return helper.ResponseError(c, http.StatusInternalServerError, err)
 			}
 			return nil
 		})

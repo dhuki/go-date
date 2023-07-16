@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strconv"
 
@@ -28,7 +29,7 @@ func NewCandidateService(repository port.CandidateRepository, redisLib port.Redi
 func (u candidateServiceImpl) SwipeAction(ctx context.Context, candidateID uint64, swipeDirection string) (err error) {
 	ctxName := fmt.Sprintf("%T.SwipeAction", u)
 
-	userID, err := strconv.ParseUint(fmt.Sprint(ctx.Value("ID")), 10, 64)
+	userID, err := strconv.ParseUint(fmt.Sprint(ctx.Value(config.ValueUserIDctx)), 10, 64)
 	if err != nil {
 		return err
 	}
@@ -36,6 +37,12 @@ func (u candidateServiceImpl) SwipeAction(ctx context.Context, candidateID uint6
 	relationType, err := domain.TranslateSwipeAction(swipeDirection)
 	if err != nil {
 		logger.Error(ctx, ctxName, "domain.TranslateSwipeAction, got err: %v", err)
+		return
+	}
+
+	relationUser, err := u.repository.GetRelationUserByUserIdAndCandidate(ctx, userID, candidateID)
+	if err != nil && err != sql.ErrNoRows {
+		logger.Error(ctx, ctxName, "u.repository.GetRelationUserByUserIdAndCandidate, got err: %v", err)
 		return
 	}
 
@@ -51,9 +58,11 @@ func (u candidateServiceImpl) SwipeAction(ctx context.Context, candidateID uint6
 	}()
 
 	if err = u.repository.UpsertRelationUser(ctx, tx, modelRepo.RelationUser{
+		ID:           relationUser.ID,
 		UserID:       userID,
 		CandidateID:  candidateID,
 		RelationType: relationType,
+		CreatedAt:    relationUser.CreatedAt,
 	}); err != nil {
 		logger.Error(ctx, ctxName, "u.repository.UpsertRelationUser, got err: %v", err)
 		return
@@ -65,7 +74,7 @@ func (u candidateServiceImpl) SwipeAction(ctx context.Context, candidateID uint6
 func (u candidateServiceImpl) GetListCandidate(ctx context.Context, limit int) (resp modelReq.CandidateListPaginationReponse, err error) {
 	ctxName := fmt.Sprintf("%T.GetListCandidate", u)
 
-	userID, err := strconv.ParseUint(fmt.Sprint(ctx.Value("ID")), 10, 64)
+	userID, err := strconv.ParseUint(fmt.Sprint(ctx.Value(config.ValueUserIDctx)), 10, 64)
 	if err != nil {
 		logger.Error(ctx, ctxName, "strconv.ParseUint, got err: %v", err)
 		return
@@ -77,18 +86,29 @@ func (u candidateServiceImpl) GetListCandidate(ctx context.Context, limit int) (
 		return
 	}
 
-	keyLastPagination := fmt.Sprintf("%s.%d", domain.KeyLastPagination, userID)
+	countTotalUser, err := u.repository.CountTotalUserPagination(ctx, user.ID, user.Gender)
+	if err != nil {
+		logger.Error(ctx, ctxName, "u.repository.CountTotalUserPagination, got err: %v", err)
+		return
+	}
 
-	page := 1
-	if value := u.redisLib.Get(keyLastPagination); len(value) <= 0 {
+	if resp.TotalPage = u.getTotalPage(countTotalUser, limit); resp.TotalPage == 0 {
+		return
+	}
+
+	page, keyLastPagination := 1, fmt.Sprintf("%s.%d", domain.KeyLastPagination, userID)
+	if value := u.redisLib.Get(keyLastPagination); len(value) > 0 {
 		if page, err = strconv.Atoi(value); err != nil {
 			logger.Error(ctx, ctxName, "strconv.Atoi, got err: %v", err)
 			return
 		}
+		if page+1 <= resp.TotalPage+1 {
+			page++
+		}
 	}
 	offset := (page - 1) * limit
 
-	users, err := u.repository.GetUserPagination(ctx, user.Gender, limit, offset)
+	users, err := u.repository.GetUserPagination(ctx, user.ID, user.Gender, limit, offset)
 	if err != nil {
 		logger.Error(ctx, ctxName, "u.repoUser.GetUserPagination, got err: %v", err)
 		return

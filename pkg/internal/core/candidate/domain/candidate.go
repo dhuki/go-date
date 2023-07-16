@@ -9,10 +9,12 @@ var (
 	swapDirectionLeft  = "Left"
 	swapDirectionRight = "Right"
 
-	transalteDirectionLeft  = "Dislike"
-	transalteDirectionRight = "Like"
+	transalteDirectionLeft  = "DISLIKE"
+	transalteDirectionRight = "LIKE"
 
 	KeyLastPagination = "last.page.candidate"
+
+	ErrInvalidSwipeAction = errors.New("terjadi kesalahan swipe direction tidak valid")
 )
 
 func TranslateSwipeAction(swipeDirection string) (string, error) {
@@ -22,7 +24,7 @@ func TranslateSwipeAction(swipeDirection string) (string, error) {
 	case strings.ToLower(swapDirectionRight):
 		return transalteDirectionRight, nil
 	default:
-		return "", errors.New("erro happen") // todo
+		return "", ErrInvalidSwipeAction
 	}
 
 }

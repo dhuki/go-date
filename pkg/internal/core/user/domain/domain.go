@@ -9,4 +9,5 @@ var (
 	ErrUserAlreadyExist   = errors.New("username sudah dipakai, mohon menggunakan username lain")
 	ErrTooManyFailedLogin = errors.New("akun anda sementara terkunci, mohon tunggu 15 menit")
 	ErrWrongPassword      = errors.New("username dan password salah, silahkan coba beberapa saat lagi")
+	ErrUsernameIsNotFound = errors.New("username tidak dapat ditemukan")
 )

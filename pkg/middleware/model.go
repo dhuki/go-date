@@ -10,6 +10,7 @@ var (
 	KeyLockingSwipeAction = "locking.swipe.action"
 
 	ErrRateLimiteReachedMaxAttempt = errors.New("swipe action telah melewati batas harian")
+	ErrTokenIsEmpty                = errors.New("terjadi kesalahan token request kosong")
 )
 
 // requestLog - request information from client

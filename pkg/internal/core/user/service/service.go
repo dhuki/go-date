@@ -86,6 +86,11 @@ func (u userServiceImpl) Login(ctx context.Context, req modelReq.LoginRequest) (
 		return
 	}
 
+	if user.ID <= 0 {
+		err = domain.ErrUsernameIsNotFound
+		return
+	}
+
 	keyFailedPassword := fmt.Sprintf("%s.%d", domain.KeyMismatchPassword, user.ID)
 	keyTemporarySuspend := fmt.Sprintf("%s.%d", domain.KeyTemporarySuspend, user.ID)
 

@@ -26,6 +26,7 @@ func NewDateHandler(
 		userService:       userService,
 		candidateService:  candidateService,
 		validationService: validationService,
+		redisLibs:         redisLibs,
 	}
 }
 

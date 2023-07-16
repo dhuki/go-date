@@ -15,7 +15,7 @@ type Config struct {
 	ConnDatabase DatabaseConfig    `mapstructure:"postgres"`
 	Redis        RedisConfig       `mapstructure:"redis"`
 	RateLimiter  RateLimiterConfig `mapstructure:"rateLimiter"`
-	JwtSecret    string            `mapstructure:"jwtSecret"`
+	JwtSecret    JWTToken          `mapstructure:"jwtToken"`
 }
 
 type Application struct {
@@ -63,4 +63,9 @@ type RedisConfig struct {
 type RateLimiterConfig struct {
 	MaxSwipeAction  int `mapstructure:"maxSwipeAction"`
 	MaxAttemptLogin int `mapstructure:"maxAttemptLogin"`
+}
+
+type JWTToken struct {
+	Secret  string        `mapstructure:"secret"`
+	Expires time.Duration `mapstructure:"expires"`
 }

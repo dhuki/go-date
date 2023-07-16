@@ -36,6 +36,21 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CountTotalUserPagination mocks base method.
+func (m *MockRepository) CountTotalUserPagination(arg0 context.Context, arg1 uint64, arg2 string) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountTotalUserPagination", arg0, arg1, arg2)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountTotalUserPagination indicates an expected call of CountTotalUserPagination.
+func (mr *MockRepositoryMockRecorder) CountTotalUserPagination(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountTotalUserPagination", reflect.TypeOf((*MockRepository)(nil).CountTotalUserPagination), arg0, arg1, arg2)
+}
+
 // Create mocks base method.
 func (m *MockRepository) Create(arg0 context.Context, arg1 *sqlx.Tx, arg2 model.User) (uint64, error) {
 	m.ctrl.T.Helper()
@@ -63,6 +78,21 @@ func (m *MockRepository) Finish(arg0 context.Context, arg1 *sqlx.Tx, arg2 error)
 func (mr *MockRepositoryMockRecorder) Finish(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Finish", reflect.TypeOf((*MockRepository)(nil).Finish), arg0, arg1, arg2)
+}
+
+// GetRelationUserByUserIdAndCandidate mocks base method.
+func (m *MockRepository) GetRelationUserByUserIdAndCandidate(arg0 context.Context, arg1, arg2 uint64) (model.RelationUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRelationUserByUserIdAndCandidate", arg0, arg1, arg2)
+	ret0, _ := ret[0].(model.RelationUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRelationUserByUserIdAndCandidate indicates an expected call of GetRelationUserByUserIdAndCandidate.
+func (mr *MockRepositoryMockRecorder) GetRelationUserByUserIdAndCandidate(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRelationUserByUserIdAndCandidate", reflect.TypeOf((*MockRepository)(nil).GetRelationUserByUserIdAndCandidate), arg0, arg1, arg2)
 }
 
 // GetUserByID mocks base method.
@@ -96,18 +126,18 @@ func (mr *MockRepositoryMockRecorder) GetUserByUsername(arg0, arg1 interface{}) 
 }
 
 // GetUserPagination mocks base method.
-func (m *MockRepository) GetUserPagination(arg0 context.Context, arg1 string, arg2, arg3 int) ([]model.User, error) {
+func (m *MockRepository) GetUserPagination(arg0 context.Context, arg1 uint64, arg2 string, arg3, arg4 int) ([]model.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserPagination", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "GetUserPagination", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].([]model.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetUserPagination indicates an expected call of GetUserPagination.
-func (mr *MockRepositoryMockRecorder) GetUserPagination(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockRepositoryMockRecorder) GetUserPagination(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserPagination", reflect.TypeOf((*MockRepository)(nil).GetUserPagination), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserPagination", reflect.TypeOf((*MockRepository)(nil).GetUserPagination), arg0, arg1, arg2, arg3, arg4)
 }
 
 // Start mocks base method.

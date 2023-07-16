@@ -13,5 +13,5 @@ CREATE TABLE public.users (
     "updatedAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" timestamp with time zone
 );
-GRANT ALL ON TABLE users TO dhukidwirachman;
-GRANT ALL ON SEQUENCE users_id_seq TO dhukidwirachman;
+-- GRANT ALL ON TABLE users TO dhukidwirachman;
+-- GRANT ALL ON SEQUENCE users_id_seq TO dhukidwirachman;

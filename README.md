@@ -21,10 +21,5 @@ a. table `user`
 b. table `relation_user`
 3. Run the service :
     ```sh
-    cd cmd/api
-    go run main.go
-    ```
-    or
-    ```sh
     make run
     ```

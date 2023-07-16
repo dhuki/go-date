@@ -17,9 +17,11 @@ type CandidateService interface {
 type CandidateRepository interface {
 	Start(ctx context.Context) (*sqlx.Tx, error)
 	Finish(ctx context.Context, tx *sqlx.Tx, err error) error
+	GetRelationUserByUserIdAndCandidate(ctx context.Context, userID, candidateID uint64) (relationUser modelRepo.RelationUser, err error)
 	UpsertRelationUser(ctx context.Context, tx *sqlx.Tx, relationUser modelRepo.RelationUser) (err error)
 	GetUserByID(ctx context.Context, id uint64) (user modelRepo.User, err error)
-	GetUserPagination(ctx context.Context, gender string, limit, offset int) (users []modelRepo.User, err error)
+	GetUserPagination(ctx context.Context, userID uint64, gender string, limit, offset int) (users []modelRepo.User, err error)
+	CountTotalUserPagination(ctx context.Context, userID uint64, gender string) (count int, err error)
 }
 
 type RedisLibs interface {

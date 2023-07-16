@@ -12,7 +12,8 @@ type UserRepository interface {
 	Create(ctx context.Context, tx *sqlx.Tx, user model.User) (id uint64, err error)
 	GetUserByID(ctx context.Context, id uint64) (user model.User, err error)
 	GetUserByUsername(ctx context.Context, username string) (user model.User, err error)
-	GetUserPagination(ctx context.Context, gender string, limit, offset int) (users []model.User, err error)
+	GetUserPagination(ctx context.Context, userID uint64, gender string, limit, offset int) (users []model.User, err error)
+	CountTotalUserPagination(ctx context.Context, userID uint64, gender string) (count int, err error)
 }
 
 func (u RepositoryImpl) Create(ctx context.Context, tx *sqlx.Tx, user model.User) (id uint64, err error) {
@@ -39,8 +40,15 @@ func (u RepositoryImpl) GetUserByUsername(ctx context.Context, username string) 
 	return user, u.dbSlave.GetContext(ctx, &user, `select * from users where username = $1 and "deletedAt" is null`, username)
 }
 
-func (u RepositoryImpl) GetUserPagination(ctx context.Context, gender string, limit, offset int) (users []model.User, err error) {
-	return users, u.dbSlave.SelectContext(ctx, &users, `select * from users 
-		where "deletedAt" is null and gender != $1
-		limit $2 offset $3`, gender, limit, offset)
+func (u RepositoryImpl) GetUserPagination(ctx context.Context, userID uint64, gender string, limit, offset int) (users []model.User, err error) {
+	return users, u.dbSlave.SelectContext(ctx, &users, `
+		select * from users 
+		where "deletedAt" is null and id != $1 and gender != $2
+		limit $3 offset $4`, userID, gender, limit, offset)
+}
+
+func (u RepositoryImpl) CountTotalUserPagination(ctx context.Context, userID uint64, gender string) (count int, err error) {
+	return count, u.dbSlave.GetContext(ctx, &count, `
+		select count(1) from users 
+		where "deletedAt" is null and id != $1 and gender != $2`, userID, gender)
 }
