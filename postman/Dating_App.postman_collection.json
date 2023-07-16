@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "dc60d127-2378-41f7-af9c-818ce7cdd5ec",
+		"name": "Dating App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13031689"
+	},
+	"item": [
+		{
+			"name": "Sign up user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"dhukidwir\",\n\t\"password\": \"12345\",\n\t\"firstName\": \"Dhuki\",\n\t\"lastName\": \"Dwi\",\n\t\"gender\": \"Male\",\n\t\"picUrl\": \"xxx\",\n\t\"district\": \"Anta\",\n\t\"city\": \"Bandung\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/user/sign-up",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"sign-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"dhukdwir\",\n    \"password\": \"12345\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get list candidate partners",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODk1MTEwMjQsImlhdCI6MTY4OTUwNzQyNCwianRpIjoiMSJ9.bXyGc7KJ6mI9VmV6L0tPdsmFE7I28jGCmoFqoibjMv8"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/candidate?limit=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"candidate"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Swipe action",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODk1MTAzNjEsImlhdCI6MTY4OTUwNjc2MSwianRpIjoiMSJ9.uQicSini15cBJD5x_aZcyCCo1pUZdKLETGOiTT3Ayho"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/candidate/swipe/2?to=left",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"candidate",
+						"swipe",
+						"2"
+					],
+					"query": [
+						{
+							"key": "to",
+							"value": "left"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update user to premium",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODk1MDY0NTAsImlhdCI6MTY4OTUwMjg1MCwianRpIjoiMiJ9.LeBGNP7hFuOnJomxzorCNc1u7W1nW3_vmkJOEzQt4w8"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/user/callback/premium/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"user",
+						"callback",
+						"premium",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
