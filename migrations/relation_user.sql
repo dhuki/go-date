@@ -1,8 +1,8 @@
 CREATE TABLE public.relation_users (
 	id serial PRIMARY KEY,
-	"userId" bigint,
-    "candidateId" bigint,
-    "relationType" text,
+	"userId" bigint not null,
+    "candidateId" bigint not null,
+    "relationType" text not null default '',
 	"createdAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" timestamp with time zone,
