@@ -23,3 +23,8 @@ b. table `relation_user`
     ```sh
     make run
     ```
+
+## Deployment
+:warning: This deployment step is not running yet, but this is a explanation about the pipelines :
+1. I create a new file .sh in folder scripts/ this file has functionality to trigger ansible playbook to running the template from ansible/ folder.
+2. The template will running to execute some action. There are get secret key in vault, then templating the secret key to config.yaml after that the template will push config.yaml to consul.

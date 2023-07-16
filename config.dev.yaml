@@ -6,20 +6,20 @@ app:
   timeout: 60s
 postgres:
   master:
-    dbName: postgres
-    host: localhost
-    password: postgres
-    port: 5432
-    schema: public
-    user: dhukidwirachman
+    dbName: {{vault_db.master_dbname}}
+    host: {{vault_db.master_host}}
+    password: {{vault_db.master_password}}
+    port: {{vault_db.master_port}}
+    schema: {{vault_db.master_schema}}
+    user: {{vault_db.master_user}}
     debug: false
   slave:
-    dbName: postgres
-    host: localhost
-    password: postgres
-    port: 5432
-    schema: public
-    user: dhukidwirachman
+    dbName: {{vault_db.slave_dbname}}
+    host: {{vault_db.slave_host}}
+    password: {{vault_db.slave_password}}
+    port: {{vault_db.slave_port}}
+    schema: {{vault_db.slave_schema}}
+    user: {{vault_db.slave_user}}
     debug: false
   maxIdleConnections: 10
   maxOpenConnections: 10
@@ -38,5 +38,5 @@ rateLimiter:
   maxSwipeAction: 10
   maxAttemptLogin: 3
 jwtToken:
-  secret: secret
+  secret: {{vault_db.jwt_secret}}
   expires: 1h
